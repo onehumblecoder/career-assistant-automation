@@ -85,12 +85,48 @@ This repo contains a working prototype of an **agentic Student Career Assistant*
 > If model access isn’t granted, Bedrock calls will fail.
 
 ## Setup (Mac Command Line)
+aws configure
 aws configure get region
 ### 1) Create and activate a virtual environment
 ```bash
+**- create env**
+cat << EOF > .env
+AWS_REGION=us-east-1
+CHAT_MODEL_ID=amazon.nova-lite-v1:0
+INDEX_PATH=index/faiss_index
+EOF
+
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -U pip
 
 **Install Dependencies**
 pip install boto3 langchain langchain-core langchain-aws mcp[cli] chromadb python-dotenv
+
+### Build the RAG Index(inside AWS)
+mkdir -p data/kb
+nano data/kb/career_exploration.md
+paste
+Career Exploration Basics:
+- Identify interests, strengths, and values
+- Explore roles through informational interviews
+- Use internships and projects as experiments
+
+cat > data/kb/outreach_playbook.md << 'EOF'
+# Outreach Playbook
+- Subject: specific + short
+- 1 sentence: who you are + what you're exploring
+- 1 sentence: why them (specific)
+- Ask: 15 minutes for advice, 2 time windows
+- Close: thank you + LinkedIn
+EOF
+
+cat > data/kb/resume_star_examples.md << 'EOF'
+# STAR Resume Examples
+- Action verbs: built, analyzed, led, improved, automated
+- Include metrics: time saved, accuracy improved, money raised, people impacted
+- Format: Action + What + How + Result
+EOF
+
+**Run Ingest script **
+python app/ingest.py
